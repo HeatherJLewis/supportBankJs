@@ -1,10 +1,5 @@
 const fs = require("fs");
 
-const createObjectOfUsers = (transactionDataArray, usersObject) => {
-    transactionDataArray.forEach(transaction => {
-        usersObject[transaction[1]] = "You have no transactions"
-    })
-}
 fs.readFile("Transactions2014.csv", function(err, data) {
     if(err) throw err;
     const transactionData = data.toString()
@@ -12,7 +7,20 @@ fs.readFile("Transactions2014.csv", function(err, data) {
                                 .split("\n")
                                 .map(singleTransaction => singleTransaction.split(','))
 
-    const usersObject = {}
-    createObjectOfUsers(transactionDataArray, usersObject)
-    console.log(usersObject)
+    const userBalances = {};
+
+    transactionDataArray.forEach(el => {
+        if(!userBalances[el[1]]){
+            userBalances[el[1]] = {owed: +el[4], owing: 0}
+        } else {
+            userBalances[el[1]].owed += +el[4]
+        }
+    })
+
+    transactionDataArray.forEach(el => {
+      userBalances[el[2]].owing += +el[4]
+    })
+
+
+    console.log(userBalances)
 });
