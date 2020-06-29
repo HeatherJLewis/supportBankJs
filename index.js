@@ -3,11 +3,12 @@ const readline = require('readline-sync');
 
 const createAnArrayOfUniqueUsers = (anArray) => {
     let arrayOfUsers = [];
-    anArray.map(el => {
-        if(arrayOfUsers.includes(el[1])){
+
+    anArray.map(transaction => {
+        if(arrayOfUsers.includes(transaction.paidBy)){
             return arrayOfUsers;
         } else {
-            arrayOfUsers.push(el[1]);
+            arrayOfUsers.push(transaction.paidBy);
         }
     });
     return arrayOfUsers;
@@ -19,10 +20,16 @@ class Balances {
 };
 
 class Transaction {
-    constructor(paidTo, description, amount) {
+    constructor(dateOfTransaction, paidBy, paidTo, description, amount) {
+        this.dateOfTransaction = dateOfTransaction,
+        this.paidBy = paidBy,
         this.paidTo = paidTo,
         this.description = description,
-        this.amount = amount
+        this.amount = Number(amount)
+    }
+
+    summary() {
+        return { paidTo: this.paidTo, description: this.description, amount: this.amount }
     }
 };
 
@@ -38,29 +45,27 @@ const createObjectOfUsers = (array) => {
 
 const createObjectOfTransactionsForAUser = (accountName, array) => {
     let userAccount = { [accountName] : {} };
-    array.forEach(el => {
-        if(el[1] === accountName || el[2] === accountName){
-            userAccount[accountName][el[0]] = new Transaction(el[2], el[3], el[4])
+    array.forEach(transaction => {
+        if(transaction.paidBy === accountName || transaction.paidTo === accountName){
+            userAccount[accountName][transaction.dateOfTransaction] = transaction.summary()
         }
     })
     return userAccount;
 }
 
-const createArrayOfTransactions = (data) => {
+const createArrayOfTransactionObjects = (data) => {
     return data
             .toString()
             .split("\n")
-            .map(singleTransaction => singleTransaction.split(','));
-};
-
-const convertAmountOwedToNumber = (array) => {
-    array.map(el => el[4] = Number(el[4]));
+            .map(singleTransaction => singleTransaction.split(','))
+            .map(transaction => new Transaction(transaction[0], transaction[1], transaction[2], transaction[3], transaction[4]));
 };
 
 const updateBalances = (array, object) => {
-    array.forEach(el => {
-        object[el[1]].balance += el[4];
-        object[el[2]].balance -= el[4];
+
+    array.forEach(transaction => {
+        object[transaction.paidBy].balance += transaction.amount;
+        object[transaction.paidTo].balance -= transaction.amount;
     });
     return object;
 };
@@ -79,9 +84,7 @@ fs.readFile("Transactions2014.csv", function(err, data) {
 
     const input = readline.prompt();
 
-    const transactionDataArray = createArrayOfTransactions(data);
-
-    convertAmountOwedToNumber(transactionDataArray);
+    const transactionDataArray = createArrayOfTransactionObjects(data);
 
     const arrayOfUsers = createAnArrayOfUniqueUsers(transactionDataArray);
 
@@ -100,7 +103,7 @@ fs.readFile("Transactions2014.csv", function(err, data) {
             console.log(summaryOfBalancesForAUser);
 
     } else {
-            console.log("Sorry - that user is not in out database");
+            console.log("Sorry - that user is not in our database");
         };
     }
 });
