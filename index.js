@@ -1,35 +1,60 @@
 const fs = require("fs");
 const readline = require('readline-sync');
 
+const createAnArrayOfUniqueUsers = (anArray) => {
+    let arrayOfUsers = [];
+    anArray.map(el => {
+        if(arrayOfUsers.includes(el[1])){
+            return arrayOfUsers;
+        } else {
+            arrayOfUsers.push(el[1]);
+        }
+    });
+    return arrayOfUsers;
+};
+class Balances {
+    constructor() {
+        this.toPay = 0,
+        this.toReceive = 0
+    }
+};
+
+const createObjectOfUsers = (array) => {
+    let object = {}
+    array.forEach(transaction => {
+        if(!object[transaction]){
+            object[transaction] = new Balances
+        };
+    })
+    return object;
+};
+
 const createArrayOfTransactions = (data) => {
     return data
             .toString()
             .split("\n")
-            .map(singleTransaction => singleTransaction.split(','))
-}
+            .map(singleTransaction => singleTransaction.split(','));
+};
 
 const convertAmountOwedToNumber = (array) => {
     array.map(el => el[4] = Number(el[4]));
-}
+};
 
-const createObjectOfUserOwedBalance = (array) => {
-    let object = {}
-    array.forEach(transaction => {
-        if(!object[transaction[1]]){
-            object[transaction[1]] = {toPay: transaction[4], toReceive: 0}
-        } else {
-            object[transaction[1]].toPay += transaction[4]
-        }
-    })
+const updateBalances = (array, object) => {
+    array.forEach(el => {
+        object[el[1]].toPay += el[4];
+        object[el[2]].toReceive += el[4];
+    });
     return object;
-}
+};
 
-const addsUserOwingBalance = (array, object) => {
-    array.forEach(transaction => {
-      object[transaction[2]].toReceive += transaction[4]
-    })
+const roundMonies = (array, object) => {
+    array.forEach(user => {
+        object[user].toPay = (object[user].toPay).toFixed(2) * -1;
+        object[user].toReceive = (object[user].toReceive).toFixed(2);
+    });
     return object;
-}
+};
 
 fs.readFile("Transactions2014.csv", function(err, data) {
     if(err) throw err;
@@ -38,32 +63,11 @@ fs.readFile("Transactions2014.csv", function(err, data) {
 
     convertAmountOwedToNumber(transactionDataArray);
 
-    const userBalancesOwed = createObjectOfUserOwedBalance(transactionDataArray)
+    const arrayOfUsers = createAnArrayOfUniqueUsers(transactionDataArray);
 
-    const userCompleteBalances = addsUserOwingBalance(transactionDataArray, userBalancesOwed)
+    const objectOfUsers = createObjectOfUsers(arrayOfUsers);
 
-    const arrayOfUsers = [];
+    const summaryOfUserBalances = roundMonies(arrayOfUsers, updateBalances(transactionDataArray, objectOfUsers));
 
-// take each element of the array and extract unique names
-    transactionDataArray.map(el => {
-        if(arrayOfUsers.includes(el[1])){
-            return arrayOfUsers;
-        } else {
-            arrayOfUsers.push(el[1])
-        }
-    });
-
-// for each user, update their object to round the monies toPay and toReceive to two decimal placess
-    arrayOfUsers.forEach(user => {
-        userCompleteBalances[user].toPay = (userCompleteBalances[user].toPay).toFixed(2) * -1
-        userCompleteBalances[user].toReceive = (userCompleteBalances[user].toReceive).toFixed(2)
-    })
-
-    console.log(userCompleteBalances)
+    console.log(summaryOfUserBalances)
 });
-
-// TODO
-// Refactor to create functions
-// Tidy up file, improve comments and push
-// Remove comments
-//
