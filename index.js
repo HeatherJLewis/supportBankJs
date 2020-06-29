@@ -14,8 +14,15 @@ const createAnArrayOfUniqueUsers = (anArray) => {
 };
 class Balances {
     constructor() {
-        this.toPay = 0,
-        this.toReceive = 0
+        this.balance = 0
+    }
+};
+
+class Transaction {
+    constructor(paidTo, description, amount) {
+        this.paidTo = paidTo,
+        this.description = description,
+        this.amount = amount
     }
 };
 
@@ -28,6 +35,16 @@ const createObjectOfUsers = (array) => {
     })
     return object;
 };
+
+const createObjectOfTransactionsForAUser = (accountName, array) => {
+    let userAccount = { [accountName] : {} };
+    array.forEach(el => {
+        if(el[1] === accountName || el[2] === accountName){
+            userAccount[accountName][el[0]] = new Transaction(el[2], el[3], el[4])
+        }
+    })
+    return userAccount;
+}
 
 const createArrayOfTransactions = (data) => {
     return data
@@ -42,22 +59,25 @@ const convertAmountOwedToNumber = (array) => {
 
 const updateBalances = (array, object) => {
     array.forEach(el => {
-        object[el[1]].toPay += el[4];
-        object[el[2]].toReceive += el[4];
+        object[el[1]].balance += el[4];
+        object[el[2]].balance -= el[4];
     });
     return object;
 };
 
 const roundMonies = (array, object) => {
     array.forEach(user => {
-        object[user].toPay = (object[user].toPay).toFixed(2) * -1;
-        object[user].toReceive = (object[user].toReceive).toFixed(2);
+        object[user].balance = (object[user].balance).toFixed(2) * -1;
     });
     return object;
 };
 
 fs.readFile("Transactions2014.csv", function(err, data) {
     if(err) throw err;
+
+    console.log('Which function would you like? List All or List');
+
+    const input = readline.prompt();
 
     const transactionDataArray = createArrayOfTransactions(data);
 
@@ -69,5 +89,18 @@ fs.readFile("Transactions2014.csv", function(err, data) {
 
     const summaryOfUserBalances = roundMonies(arrayOfUsers, updateBalances(transactionDataArray, objectOfUsers));
 
-    console.log(summaryOfUserBalances)
+
+    if(input === 'List All'){
+        console.log(summaryOfUserBalances)
+    } else if(input === "List[Account]"){
+        console.log('Which user would you like?');
+        const userRequired = readline.prompt();
+        if(arrayOfUsers.includes(userRequired)){
+            const summaryOfBalancesForAUser = createObjectOfTransactionsForAUser(userRequired, transactionDataArray)
+            console.log(summaryOfBalancesForAUser);
+
+    } else {
+            console.log("Sorry - that user is not in out database");
+        };
+    }
 });
