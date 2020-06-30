@@ -1,0 +1,26 @@
+[2020-06-30T11:22:12.097] [DEBUG] logs/debug.log - { [Error: ENOENT: no such file or directory, open 'DodgyTransactions2014.csv']
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'DodgyTransactions2014.csv' }
+[2020-06-30T11:22:32.526] [DEBUG] logs/debug.log - { [Error: ENOENT: no such file or directory, open 'DodgyTransactions.csv']
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'DodgyTransactions.csv' }
+[2020-06-30T11:29:53.739] [DEBUG] debug - { [Error: ENOENT: no such file or directory, open 'DodgyTransactions.csv']
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'DodgyTransactions.csv' }
+[2020-06-30T11:30:04.758] [DEBUG] debug - { [Error: ENOENT: no such file or directory, open 'DodgyTransactions.csv']
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'DodgyTransactions.csv' }
+[2020-06-30T11:33:38.310] [DEBUG] debug - TypeError: Assignment to constant variable.
+    at /Users/lewish54/Apprenticeship/supportBankJs/index.js:101:34
+    at FSReqWrap.readFileAfterClose [as oncomplete] (internal/fs/read_file_context.js:53:3)
+[2020-06-30T12:45:18.499] [DEBUG] debug - TypeError: Assignment to constant variable.
+    at /Users/lewish54/Apprenticeship/supportBankJs/index.js:102:34
+    at FSReqWrap.readFileAfterClose [as oncomplete] (internal/fs/read_file_context.js:53:3)

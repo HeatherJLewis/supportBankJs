@@ -1,5 +1,21 @@
 const fs = require("fs");
 const readline = require('readline-sync');
+const log4js = require('log4js');
+
+let transactionDataArray = [];
+let repeatTransaction;
+
+log4js.configure({
+    appenders: {
+        file: { type: 'file', filename: 'logs/debug.log' }
+    },
+    categories: {
+        default: { appenders: ['file'], level: 'debug'}
+    }
+});
+
+const logger = log4js.getLogger("debug");
+
 class Balances {
     constructor() {
         this.balance = 0
@@ -43,7 +59,7 @@ const createObjectOfTransactionsForAUser = (accountName, transactionDataArray) =
         }
     })
     return userAccount;
-}
+};
 
 const createArrayOfTransactionObjects = (data) => {
     return data
@@ -59,26 +75,40 @@ const updateBalances = (transactionDataArray, dictionaryOfUsers) => {
         dictionaryOfUsers[transaction.paidBy].balance += transaction.amount;
         dictionaryOfUsers[transaction.paidTo].balance -= transaction.amount;
     });
+
     return dictionaryOfUsers;
 };
 
-fs.readFile("Transactions2014.csv", function(err, data) {
-    if(err) throw err;
+const roundBalances = (summaryOfUserBalances) => {
+    Object.keys(summaryOfUserBalances).forEach(username => {
+        summaryOfUserBalances[username].balance = (summaryOfUserBalances[username].balance).toFixed(2);
+    });
+};
 
-    let repeatTransaction;
+fs.readFile("Transactions2014.csv", function(err, data) {
+    if(err){
+        logger.debug(err);
+        throw err;
+    };
 
     do {
         console.log('Which function would you like? Enter \'List All\' or \'Username\'');
 
         const userInput = readline.prompt();
 
-        const transactionDataArray = createArrayOfTransactionObjects(data);
+        try {
+            transactionDataArray = createArrayOfTransactionObjects(data);
+        } catch (e) {
+            logger.debug(e);
+        }
+
+        transactionDataArray = createArrayOfTransactionObjects(data);
 
         const dictionaryOfUsers = createDictionaryOfUsers(transactionDataArray);
 
-
         if(userInput === 'List All'){
             const summaryOfUserBalances = updateBalances(transactionDataArray, dictionaryOfUsers);
+            roundBalances(summaryOfUserBalances);
             console.log(summaryOfUserBalances)
 
         } else if(dictionaryOfUsers.hasOwnProperty(userInput)){
