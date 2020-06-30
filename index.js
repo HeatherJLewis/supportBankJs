@@ -1,18 +1,5 @@
 const fs = require("fs");
 const readline = require('readline-sync');
-
-const createAnArrayOfUniqueUsers = (anArray) => {
-    let arrayOfUsers = [];
-
-    anArray.map(transaction => {
-        if(arrayOfUsers.includes(transaction.paidBy)){
-            return arrayOfUsers;
-        } else {
-            arrayOfUsers.push(transaction.paidBy);
-        }
-    });
-    return arrayOfUsers;
-};
 class Balances {
     constructor() {
         this.balance = 0
@@ -28,26 +15,31 @@ class Transaction {
         this.amount = Number(amount)
     }
 
-    summary() {
+    summaryOfMoneyDueTransactions() {
         return { paidTo: this.paidTo, description: this.description, amount: this.amount }
+    }
+
+    summaryOfMoneyOwedTransactions() {
+        return { paidBy: this.paidBy, description: this.description, amount: this.amount }
     }
 };
 
-const createObjectOfUsers = (array) => {
-    let object = {}
-    array.forEach(transaction => {
-        if(!object[transaction]){
-            object[transaction] = new Balances
-        };
-    })
-    return object;
+const createDictionaryOfUsers = (transactionDataArray) => {
+    let dictionaryOfUsers = {};
+    transactionDataArray.forEach(transaction => {
+        dictionaryOfUsers[transaction.paidBy] = { balance : 0 };
+    });
+    return dictionaryOfUsers;
 };
 
-const createObjectOfTransactionsForAUser = (accountName, array) => {
+const createObjectOfTransactionsForAUser = (accountName, transactionDataArray) => {
     let userAccount = { [accountName] : {} };
-    array.forEach(transaction => {
-        if(transaction.paidBy === accountName || transaction.paidTo === accountName){
-            userAccount[accountName][transaction.dateOfTransaction] = transaction.summary()
+    transactionDataArray.forEach(transaction => {
+        if(transaction.paidTo === accountName){
+            userAccount[accountName][transaction.dateOfTransaction] = transaction.summaryOfMoneyDueTransactions()
+        }
+        if(transaction.paidBy === accountName){
+            userAccount[accountName][transaction.dateOfTransaction] = transaction.summaryOfMoneyOwedTransactions()
         }
     })
     return userAccount;
@@ -70,13 +62,6 @@ const updateBalances = (array, object) => {
     return object;
 };
 
-const roundMonies = (array, object) => {
-    array.forEach(user => {
-        object[user].balance = (object[user].balance).toFixed(2) * -1;
-    });
-    return object;
-};
-
 fs.readFile("Transactions2014.csv", function(err, data) {
     if(err) throw err;
 
@@ -86,19 +71,16 @@ fs.readFile("Transactions2014.csv", function(err, data) {
 
     const transactionDataArray = createArrayOfTransactionObjects(data);
 
-    const arrayOfUsers = createAnArrayOfUniqueUsers(transactionDataArray);
+    const dictionaryOfUsers = createDictionaryOfUsers(transactionDataArray);
 
-    const objectOfUsers = createObjectOfUsers(arrayOfUsers);
-
-    const summaryOfUserBalances = roundMonies(arrayOfUsers, updateBalances(transactionDataArray, objectOfUsers));
-
+    const summaryOfUserBalances = updateBalances(transactionDataArray, dictionaryOfUsers);
 
     if(input === 'List All'){
         console.log(summaryOfUserBalances)
     } else if(input === "List[Account]"){
         console.log('Which user would you like?');
         const userRequired = readline.prompt();
-        if(arrayOfUsers.includes(userRequired)){
+        if(dictionaryOfUsers.hasOwnProperty(userRequired)){
             const summaryOfBalancesForAUser = createObjectOfTransactionsForAUser(userRequired, transactionDataArray)
             console.log(summaryOfBalancesForAUser);
 
