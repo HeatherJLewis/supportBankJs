@@ -24,3 +24,27 @@
 [2020-06-30T12:45:18.499] [DEBUG] debug - TypeError: Assignment to constant variable.
     at /Users/lewish54/Apprenticeship/supportBankJs/index.js:102:34
     at FSReqWrap.readFileAfterClose [as oncomplete] (internal/fs/read_file_context.js:53:3)
+[2020-06-30T15:23:43.947] [INFO] debug - File successfully read
+[2020-06-30T15:24:52.584] [INFO] debug - File successfully read
+[2020-06-30T15:24:56.185] [INFO] debug - User input: List All
+[2020-06-30T15:26:24.557] [INFO] debug - Application started ...
+[2020-06-30T15:26:24.562] [INFO] debug - File successfully read
+[2020-06-30T15:26:29.442] [INFO] debug - User input: Sarah T
+[2020-06-30T15:26:54.452] [INFO] debug - User input: List All
+[2020-06-30T15:27:30.343] [INFO] debug - Application started ...
+[2020-06-30T15:27:30.346] [INFO] debug - File successfully read
+[2020-06-30T15:27:36.371] [INFO] debug - User input: List All
+[2020-06-30T15:27:43.312] [INFO] debug - User input: Rob S
+[2020-06-30T15:30:14.950] [INFO] debug - Application started ...
+[2020-06-30T15:30:14.954] [INFO] debug - File successfully read
+[2020-06-30T15:30:17.867] [INFO] debug - User input: Bob
+[2020-06-30T15:30:17.868] [INFO] debug - Incorrect name given: Bob
+[2020-06-30T15:51:47.101] [INFO] debug - Application started ...
+[2020-06-30T15:51:47.104] [INFO] debug - File successfully read
+[2020-06-30T15:51:51.770] [INFO] debug - User input: List All
+[2020-06-30T15:52:07.805] [INFO] debug - Application started ...
+[2020-06-30T15:52:07.808] [INFO] debug - File successfully read
+[2020-06-30T15:52:11.934] [INFO] debug - User input: List All
+[2020-06-30T15:54:15.382] [INFO] debug - Application started ...
+[2020-06-30T15:54:15.385] [INFO] debug - File successfully read
+[2020-06-30T15:54:17.981] [INFO] debug - User input: List All

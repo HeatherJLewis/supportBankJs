@@ -7,10 +7,10 @@ let repeatTransaction;
 
 log4js.configure({
     appenders: {
-        file: { type: 'file', filename: 'logs/debug.log' }
+        file: { type: 'file', filename: 'logs/debug.log' },
     },
     categories: {
-        default: { appenders: ['file'], level: 'debug'}
+        default: { appenders: ['file'], level: 'debug'},
     }
 });
 
@@ -18,11 +18,11 @@ const logger = log4js.getLogger("debug");
 
 class Transaction {
     constructor(dateOfTransaction, paidBy, paidTo, description, amount) {
-        this.dateOfTransaction = dateOfTransaction,
-        this.paidBy = paidBy,
-        this.paidTo = paidTo,
-        this.description = description,
-        this.amount = Number(amount)
+        this.dateOfTransaction = dateOfTransaction;
+        this.paidBy = paidBy;
+        this.paidTo = paidTo;
+        this.description = description;
+        this.amount = isNaN(Number(amount)) ? 0 : Number(amount)
     }
 
     summaryOfMoneyDueTransactions() {
@@ -85,11 +85,15 @@ fs.readFile("DodgyTransactions2015.csv", function(err, data) {
         logger.debug(err);
         throw err;
     };
+    logger.info('Application started ...')
+    logger.info(`File successfully read`)
 
     do {
         console.log('Which function would you like? Enter \'List All\' or \'Username\'');
 
         const userInput = readline.prompt();
+
+        logger.info(`User input: ${userInput}`)
 
         try {
             transactionDataArray = createArrayOfTransactionObjects(data);
@@ -109,6 +113,7 @@ fs.readFile("DodgyTransactions2015.csv", function(err, data) {
             console.log(summaryOfBalancesForAUser);
 
         } else {
+                logger.info(`Incorrect name given: ${userInput}`)
                 console.log("Sorry - that user is not in our database.");
             };
         console.log("Would you like another transaction? Type \'y\' for yes, \'n\' for no");
