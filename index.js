@@ -53,39 +53,42 @@ const createArrayOfTransactionObjects = (data) => {
             .map(transaction => new Transaction(transaction[0], transaction[1], transaction[2], transaction[3], transaction[4]));
 };
 
-const updateBalances = (array, object) => {
+const updateBalances = (transactionDataArray, dictionaryOfUsers) => {
 
-    array.forEach(transaction => {
-        object[transaction.paidBy].balance += transaction.amount;
-        object[transaction.paidTo].balance -= transaction.amount;
+    transactionDataArray.forEach(transaction => {
+        dictionaryOfUsers[transaction.paidBy].balance += transaction.amount;
+        dictionaryOfUsers[transaction.paidTo].balance -= transaction.amount;
     });
-    return object;
+    return dictionaryOfUsers;
 };
 
 fs.readFile("Transactions2014.csv", function(err, data) {
     if(err) throw err;
 
-    console.log('Which function would you like? List All or List');
+    let repeatTransaction;
 
-    const input = readline.prompt();
+    do {
+        console.log('Which function would you like? Enter \'List All\' or \'Username\'');
 
-    const transactionDataArray = createArrayOfTransactionObjects(data);
+        const userInput = readline.prompt();
 
-    const dictionaryOfUsers = createDictionaryOfUsers(transactionDataArray);
+        const transactionDataArray = createArrayOfTransactionObjects(data);
 
-    const summaryOfUserBalances = updateBalances(transactionDataArray, dictionaryOfUsers);
+        const dictionaryOfUsers = createDictionaryOfUsers(transactionDataArray);
 
-    if(input === 'List All'){
-        console.log(summaryOfUserBalances)
-    } else if(input === "List[Account]"){
-        console.log('Which user would you like?');
-        const userRequired = readline.prompt();
-        if(dictionaryOfUsers.hasOwnProperty(userRequired)){
-            const summaryOfBalancesForAUser = createObjectOfTransactionsForAUser(userRequired, transactionDataArray)
+
+        if(userInput === 'List All'){
+            const summaryOfUserBalances = updateBalances(transactionDataArray, dictionaryOfUsers);
+            console.log(summaryOfUserBalances)
+
+        } else if(dictionaryOfUsers.hasOwnProperty(userInput)){
+            const summaryOfBalancesForAUser = createObjectOfTransactionsForAUser(userInput, transactionDataArray)
             console.log(summaryOfBalancesForAUser);
 
-    } else {
-            console.log("Sorry - that user is not in our database");
-        };
-    }
+        } else {
+                console.log("Sorry - that user is not in our database.");
+            };
+        console.log("Would you like another transaction? Type \'y\' for yes, \'n\' for no");
+        repeatTransaction = readline.prompt();
+    } while (repeatTransaction === "y");
 });
