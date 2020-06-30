@@ -16,12 +16,6 @@ log4js.configure({
 
 const logger = log4js.getLogger("debug");
 
-class Balances {
-    constructor() {
-        this.balance = 0
-    }
-};
-
 class Transaction {
     constructor(dateOfTransaction, paidBy, paidTo, description, amount) {
         this.dateOfTransaction = dateOfTransaction,
@@ -65,6 +59,7 @@ const createArrayOfTransactionObjects = (data) => {
     return data
             .toString()
             .split("\n")
+            .slice(1)
             .map(singleTransaction => singleTransaction.split(','))
             .map(transaction => new Transaction(transaction[0], transaction[1], transaction[2], transaction[3], transaction[4]));
 };
@@ -85,7 +80,7 @@ const roundBalances = (summaryOfUserBalances) => {
     });
 };
 
-fs.readFile("Transactions2014.csv", function(err, data) {
+fs.readFile("DodgyTransactions2015.csv", function(err, data) {
     if(err){
         logger.debug(err);
         throw err;
@@ -101,8 +96,6 @@ fs.readFile("Transactions2014.csv", function(err, data) {
         } catch (e) {
             logger.debug(e);
         }
-
-        transactionDataArray = createArrayOfTransactionObjects(data);
 
         const dictionaryOfUsers = createDictionaryOfUsers(transactionDataArray);
 
