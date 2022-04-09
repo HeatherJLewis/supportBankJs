@@ -19,7 +19,7 @@
   "homepage": "https://github.com/HeatherJLewis/supportBankJs#readme",
   "dependencies": {
     "log4js": "^6.3.0",
-    "moment": "^2.27.0",
+    "moment": "^2.29.2",
     "readline-sync": "^1.4.10"
   }
 }
